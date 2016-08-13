@@ -48,7 +48,6 @@ void bcast_listener()
 
 	while(1)
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 		char bcast_buffer[1024];
 		unsigned slen = sizeof(bcast_buffer);
 		recvfrom(bcast_sockfd, bcast_buffer, sizeof(bcast_buffer)-1, 0, (sockaddr *)&new_addr, &slen);
