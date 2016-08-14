@@ -14,6 +14,7 @@
 #include<cstdlib>
 #include<sys/wait.h>
 #include<string.h>
+#include<mutex>
 #define SUCCESS 0
 #define FAILURE 1
 #define BCAST_PORT 5000
@@ -21,6 +22,8 @@
 #define MAX_SIZE 1024
 #define CLI_ID "101"
 #define TOKEN "#"
+
+std::mutex listner_mutex;
 
 void file_bcast()
 {
@@ -49,7 +52,7 @@ void file_bcast()
 		memset(fs_data, 0, MAX_SIZE);
 		strcpy(fs_data, CLI_ID);
 
-		if ((dir = opendir ("../files/")) != NULL) 
+		if ((dir = opendir ("./")) != NULL) 
 		{
   			while((ent = readdir (dir)) != NULL)
  			{
@@ -63,21 +66,11 @@ void file_bcast()
 			}
 		}
   		closedir (dir);
-		
 		std::cout << fs_data << std::endl;		
 		sendto(bcast_sockfd, fs_data, strlen(fs_data), 0, (struct sockaddr *)&new_addr, sizeof(struct sockaddr_in)); 
 
 
 
-	}
-}
-
-void req_handler()
-{
-	while(1)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(800));
-		std::cout << "Req " <<std::endl; 
 	}
 }
 
@@ -87,10 +80,10 @@ int main(int argc, char **argv)
 {
 	
 	std::thread broadcaster(file_bcast);
-	std::thread req_listner(req_handler);
+//	std::thread listener(bcast_listener);
 	broadcaster.detach();
 
-	req_listner.detach();
+//	listener.detach();
 	while(1){}
 
 	return SUCCESS;
