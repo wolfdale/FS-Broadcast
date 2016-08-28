@@ -22,32 +22,27 @@
 #define MAX_SIZE 1024
 #define CLI_ID "101"
 #define TOKEN "#"
-
+#define PORT 54545
 std::mutex listner_mutex;
 
 void file_bcast()
 {
+	//Current Client Socket
 	int bcast_sockfd;
-	int bcast_enable = 1;
 	
-	struct sockaddr_in new_addr;
-
 	bcast_sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
+	struct sockaddr_in new_addr;
 	memset(&new_addr, 0, sizeof(new_addr));
-	setsockopt(bcast_sockfd, SOL_SOCKET, SO_BROADCAST, (void *)&bcast_enable, sizeof(bcast_enable));
 	new_addr.sin_family = AF_INET;
-	new_addr.sin_port = BCAST_PORT;
-	new_addr.sin_addr.s_addr = htonl(INADDR_BROADCAST);
-
-	int bind_status = bind(bcast_sockfd, (struct sockaddr*)&new_addr, sizeof(new_addr));
+	new_addr.sin_port = PORT;
+	new_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	while(1)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 		DIR *dir;
 		struct dirent *ent;
-
 		char fs_data[MAX_SIZE];
 		memset(fs_data, 0, MAX_SIZE);
 		strcpy(fs_data, CLI_ID);
