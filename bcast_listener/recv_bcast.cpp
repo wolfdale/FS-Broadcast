@@ -28,35 +28,34 @@ For Testing Purposes
 
 #define SUCCESS 0
 #define FAILURE 1
-#define BCAST_PORT 5000
+#define BCAST_PORT 54545
 
 std::mutex listner_mutex;
 
 void bcast_listener()
 {
 	int bcast_sockfd;
-	int bcast_enable = 1;
 
 	struct sockaddr_in new_addr;
+	struct sockaddr_in cli_addr;
+	unsigned slen = sizeof(cli_addr);
 
 	bcast_sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
 	memset(&new_addr, 0, sizeof(new_addr));
-	setsockopt(bcast_sockfd, SOL_SOCKET, SO_BROADCAST, (void *)&bcast_enable, sizeof(bcast_enable));
 	new_addr.sin_family = AF_INET;
 	new_addr.sin_port = BCAST_PORT;
-	new_addr.sin_addr.s_addr = htonl(INADDR_BROADCAST);
+	new_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	int bind_status = bind(bcast_sockfd, (struct sockaddr*)&new_addr, sizeof(new_addr));
 
 	while(1)
 	{
-		std::lock_guard<std::mutex> lock(listner_mutex);
+//		std::lock_guard<std::mutex> lock(listner_mutex);
 //		listner_mutex.lock();
 		char bcast_buffer[1024];
 		memset(bcast_buffer, 0, sizeof(bcast_buffer));
-		unsigned slen = sizeof(bcast_buffer);
-		recvfrom(bcast_sockfd, bcast_buffer, sizeof(bcast_buffer)-1, 0, (sockaddr *)&new_addr, &slen);
+		recvfrom(bcast_sockfd, bcast_buffer, sizeof(bcast_buffer)-1, 0, (sockaddr *)&cli_addr, &slen);
 		std::cout << bcast_buffer << std::endl;
 //		listner_mutex.unlock();
 	}
