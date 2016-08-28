@@ -1,7 +1,15 @@
+//IP & Port Address of this Client
 IP=127.0.0.1
 PORT=54545
-CLUSTER_IP_1=127.0.0.1
-CLUSTER_PORT_1=5000
+
+//File System Broadcast Duration
+FS_DURATION=5000
+
+//Cluster IP & PORT Addresses
+IP_1=127.0.0.1
+PORT_1=5000
+IP_2=127.0.0.1
+PORT_1=6000
 
 
 
