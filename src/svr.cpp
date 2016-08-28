@@ -17,15 +17,13 @@
 #include<mutex>
 #define SUCCESS 0
 #define FAILURE 1
-#define BCAST_PORT 5000
-#define REQ_LISTNER_PORT 6000
 #define MAX_SIZE 1024
 #define CLI_ID "101"
 #define TOKEN "#"
-#define PORT 54545
-std::mutex listner_mutex;
+#define BCAST_PORT 6000
+#define LISTENER_PORT 54545
 
-void file_bcast()
+void fs_bcast()
 {
 	//Current Client Socket
 	int bcast_sockfd;
@@ -35,7 +33,7 @@ void file_bcast()
 	struct sockaddr_in new_addr;
 	memset(&new_addr, 0, sizeof(new_addr));
 	new_addr.sin_family = AF_INET;
-	new_addr.sin_port = PORT;
+	new_addr.sin_port = BCAST_PORT;
 	new_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	while(1)
@@ -46,7 +44,6 @@ void file_bcast()
 		char fs_data[MAX_SIZE];
 		memset(fs_data, 0, MAX_SIZE);
 		strcpy(fs_data, CLI_ID);
-
 		if ((dir = opendir ("./")) != NULL) 
 		{
   			while((ent = readdir (dir)) != NULL)
@@ -63,9 +60,34 @@ void file_bcast()
   		closedir (dir);
 		std::cout << fs_data << std::endl;		
 		sendto(bcast_sockfd, fs_data, strlen(fs_data), 0, (struct sockaddr *)&new_addr, sizeof(struct sockaddr_in)); 
+	}
+}
 
 
+void bcast_listener()
+{
+	int sockfd;
+	std::cout<<"Hello"<<std::endl;
+	struct sockaddr_in new_addr;
+	struct sockaddr_in cli_addr;
+	unsigned slen = sizeof(cli_addr);
 
+	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+
+	memset(&new_addr, 0, sizeof(new_addr));
+	new_addr.sin_family = AF_INET;
+	new_addr.sin_port = LISTENER_PORT;
+	new_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+	int bind_status = bind(sockfd, (struct sockaddr*)&new_addr, sizeof(new_addr));
+
+	while(1)
+	{
+		char bcast_buffer[1024];
+		memset(bcast_buffer, 0, sizeof(bcast_buffer));
+		recvfrom(sockfd, bcast_buffer, sizeof(bcast_buffer)-1, 0, (sockaddr *)&cli_addr, &slen);
+		std::cout << "Listening.." <<std::endl;
+		std::cout << "GOT FS" << bcast_buffer << std::endl;
 	}
 }
 
@@ -74,13 +96,11 @@ void file_bcast()
 int main(int argc, char **argv)
 {
 	
-	std::thread broadcaster(file_bcast);
-//	std::thread listener(bcast_listener);
+	std::thread broadcaster(fs_bcast);
+	std::thread listener(bcast_listener);
 	broadcaster.detach();
-
-//	listener.detach();
+	listener.detach();
 	while(1){}
-
 	return SUCCESS;
 }
 
