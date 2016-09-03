@@ -15,6 +15,9 @@
 #include<sys/wait.h>
 #include<string.h>
 #include<mutex>
+#include<unordered_map>
+#include <iostream>
+#include <fstream>
 #define SUCCESS 0
 #define FAILURE 1
 #define MAX_SIZE 1024
@@ -22,6 +25,32 @@
 #define TOKEN "#"
 #define BCAST_PORT 6000
 #define LISTENER_PORT 54545
+
+char Client_id[15]={0};
+char b_cast_time[10]={0};
+
+//unordered_map<std::string,std::string> cluster_info;
+
+void config_parser()
+{
+	std::fstream config_file;
+	std::string line;
+	config_file.open("../files/config",std::ios::in|std::ios::out);
+	while(getline(config_file,line))
+	{
+
+		if(0==line.length())
+			continue;
+		else
+			std::cout<<line<<std::endl;
+	}
+
+
+
+}
+
+
+
 
 void fs_bcast()
 {
