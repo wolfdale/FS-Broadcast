@@ -1,26 +1,11 @@
-//Client ID
 C_ID=101
 
-//Max Receiving Buffer Size
 MAX_BUFF=1024
 
-//IP & Port Address of this Client
 IP=127.0.0.1
 PORT=54545
 
-//File System Broadcast Duration
 FS_DURATION=5000
 
-//Cluster IP & PORT Addresses
-IP_1=127.0.0.1
-PORT_1=5000
-IP_2=127.0.0.1
-PORT_1=6000
-
-
-
-
-
-
-
-
+CIP=127.0.0.1:5000
+CIP=127.0.0.1:6000
