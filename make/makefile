@@ -1,5 +1,5 @@
 CC=g++
-FLAGS=-std=c++0x -g -c
+FLAGS= -c -g -std=c++0x  
 
 BIN=../bin/
 SRC=../src/
@@ -8,7 +8,11 @@ HEADER=../include/
 INCLUDE=-I../include/
 FILE=../files/
 
-fs_bcast:
+$(BIN)fs_bcast:$(OBJ)svr.o
+	$(CC) -o $(BIN)fs_bcast $(OBJ)svr.o $(INCLUDE) -pthread
+
+$(OBJ)svr.o:$(SRC)svr.cpp $(HEADER)fs_header.h
+	$(CC) $(FLAGS) -pthread $(INCLUDE) $(SRC)svr.cpp -o $(OBJ)svr.o
 
 
 
