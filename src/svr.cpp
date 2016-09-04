@@ -29,23 +29,51 @@
 char Client_id[15]={0};
 char b_cast_time[10]={0};
 
-//unordered_map<std::string,std::string> cluster_info;
+std::unordered_map<std::string,std::string> cluster_info;
 
 void config_parser()
 {
-	std::fstream config_file;
-	std::string line;
-	config_file.open("../files/config",std::ios::in|std::ios::out);
-	while(getline(config_file,line))
+	FILE *config_file;
+	char line[255];
+	config_file = fopen("../config/config","r");
+	while(fgets(line,sizeof(line),config_file))
 	{
-
-		if(0==line.length())
-			continue;
+		if(line[0]=='\n')
+			continue;	
 		else
-			std::cout<<line<<std::endl;
+		{
+			
+
+
+		}
+
 	}
 
+	//std::fstream config_file;
+	//char line[255];
+	//config_file.open("../config/config",std::ios::in|std::ios::out);
+/*
+	while(config_file.getline(line,255))
+	{
 
+		if('\n'==line[0])
+			continue;
+		else
+		{
+			std::cout<<line<<std::endl;
+			char* ip =strtok(line,"=");
+
+			//cluster_info[ip]=port;	
+			
+
+		}
+
+
+
+			
+		}
+
+*/
 
 }
 
@@ -124,7 +152,7 @@ void bcast_listener()
 
 int main(int argc, char **argv)
 {
-	
+	config_parser();	
 	std::thread broadcaster(fs_bcast);
 	std::thread listener(bcast_listener);
 	broadcaster.detach();
