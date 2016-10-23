@@ -1,5 +1,5 @@
 # FS-Broadcast
-<p>File BroadCast System over UDP Protocol</p>
+<h3>File BroadCast System over UDP Protocol</h3>
 <p>A distributed system where each node broadcast it's file system (not whole
 file system, just content of directory, it can be configured to broadcast whole
 file system) to other broadcasting nodes. it's a form of communication where 
@@ -20,5 +20,16 @@ in network, thus making it easy to transfer files directly without any dependenc
 on any central node.<p>
 
 <h3>Concept of Hidden Node</h3>
-<p>it's a concept which I designed <p>
+<p>it's a concept which I designed, to make a node hidden from network, yet it
+knows the full topology of network. it never broadcast its content to other node
+but listens to the broadcast of other node.(Still figuring out the use case)<p>
+
+<h3>Concept of Privileges</h3>
+<p>With this system, a node only broadcast files local to itself. it never 
+broadcast the file list which it have received from other nodes. The reason
+for this is <u>Privileges</u> sometime a node may have confidential files, which
+other node need not to know about. For this a configuration file is kept, so a 
+node knows what other node in network it needs to broadcast.</p>
+
+
 
