@@ -13,5 +13,12 @@ system will know that file has been deleted from that particular node.</p>
 there in network, what type of files particular node have. Usually in centralized
 network a node requesting a file has to query the central node for loaction of
 file, later on it establishes a direct communication with node for file transfer.
-<p>
+Incase central node is down the file transfer can not be possible.<p>
+
+<p>This system uses a distributed approach, where each node knows the file loaction
+in network, thus making it easy to transfer files directly without any dependence
+on any central node.<p>
+
+<h3>Concept of Hidden Node</h3>
+<p>it's a concept which I designed <p>
 
