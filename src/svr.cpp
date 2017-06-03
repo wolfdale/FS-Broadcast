@@ -23,6 +23,7 @@
 #include <vector>
 #include <iterator>
 
+//#include "fs_header.h"
 #define SUCCESS 0
 #define FAILURE 1
 #define MAX_SIZE 1024
@@ -38,8 +39,9 @@ struct node_config_object{
 	char *node_id;
 	char *node_ip;
 	char *node_port;
-	int buffer;
-	int timer;
+	char *buffer;
+	char *timer;
+	char *listener_port;
 };
 
 template<typename Out>
@@ -58,78 +60,56 @@ std::vector<std::string> split(const std::string &s, char delim) {
     return elems;
 }
 
-void nodeBootSequence(struct node_config_object *nodeID)
+void nodeBootSequence(struct node_config_object *nodeObj)
 {
-	
-	std::ifstream ConfigFile;
-	ConfigFile.open("../config/config");
-	std::string data;
-	while(getline(ConfigFile, data))
-	{
-		if(data == "") 
-		{
-			continue;
-		}
-		else
-		{
-			std::cout<<data<<std::endl;
-			std::vector<std::string> x = split(data, '=');
-			for (auto i: x)
-  			{	
-				std::cout << i << std::endl;
-			}	
-		}
-	}
+	FILE *config_file = NULL;
+	char line[150];
+	int line_size = 150;
 
-
-}
-/*
-
-	FILE *config_file;
-	char line[255];
-	string TempBuffer;
 	config_file = fopen("../config/config","r");
-	while(fgets(line,sizeof(line),config_file))
+	
+	while (fgets(line, line_size, config_file))  
 	{
-		if(line[0]=='#'|| (!(strcmp(line,""))) )
-			continue;	
-		else
+    		if(line[0]=='#')
 		{
-			std::cout<<line<<std::endl;
+                        continue;
 		}
+                else
+                {
+                        std::cout<<line<<std::endl;
+			char *temp1 = NULL;
+			char *temp2 = NULL;
+			temp1 = strtok(line,"=");
+                        std::cout<<temp1<<std::endl;
+			if(strcmp(temp1,"NODE_ID") == 0){
+				temp2 = strtok(NULL,"=");
+				nodeObj->node_id = strdup(temp2);
+			}
+			if(strcmp(temp1,"NODE_IP_ADDRESS") == 0){
+				temp2 = strtok(NULL,"=");
+				nodeObj->node_ip = strdup(temp2);
+			}
+			if(strcmp(temp1,"NODE_PORT_ADDRESS") == 0){
+				temp2 = strtok(NULL,"=");
+				nodeObj->node_port = strdup(temp2);
+			}
+			if(strcmp(temp1,"MAX_BUFF") == 0){
+				temp2 = strtok(NULL,"=");
+				nodeObj->buffer = strdup(temp2);
+			}
+			if(strcmp(temp1,"FS_DURATION") == 0){
+				temp2 = strtok(NULL,"=");
+				nodeObj->timer = strdup(temp2);
+			}
+
+			if(strcmp(temp1,"LISTNER_PORT") == 0){
+				temp2 = strtok(NULL,"=");
+				nodeObj->listener_port = strdup(temp2);
+			}
+                }
 
 	}
-*/
-	//std::fstream config_file;
-	//char line[255];
-	//config_file.open("../config/config",std::ios::in|std::ios::out);
-/*
-	while(config_file.getline(line,255))
-	{
-
-		if('\n'==line[0])
-			continue;
-		else
-		{
-			std::cout<<line<<std::endl;
-			char* ip =strtok(line,"=");
-
-			//cluster_info[ip]=port;	
-			
-
-		}
-
-
-
-			
-		}
-
-*/
-
-
-
-
-
+}
 
 void fs_bcast()
 {
@@ -178,10 +158,6 @@ void fs_bcast()
 
 		//Need to implment for loop over all Socket fd to send file info
 		sendto(bcast_sockfd, fs_data, strlen(fs_data), 0, (struct sockaddr *)&new_addr, sizeof(struct sockaddr_in)); 
-		
-		
-
-
 	}
 }
 
@@ -220,10 +196,15 @@ void bcast_listener()
 int main(int argc, char **argv)
 {
 	/* Configuration Parsing */
-	struct node_config_object *nodeID;
-	nodeID = (struct node_config_object*)malloc(sizeof(node_config_object));
-	nodeBootSequence(nodeID);	
-	
+	struct node_config_object *nodeObj;
+	nodeObj = (struct node_config_object*)malloc(sizeof(node_config_object));
+	nodeBootSequence(nodeObj);	
+	std::cout << "========================="<<nodeObj->node_id;	
+	std::cout << "========================="<<nodeObj->node_ip;	
+	std::cout << "========================="<<nodeObj->node_port;	
+	std::cout << "========================="<<nodeObj->buffer;	
+	std::cout << "========================="<<nodeObj->timer;	
+	std::cout << "========================="<<nodeObj->listener_port;	
 	/* Start Broadcaseting Thread */
 	std::thread broadcaster(fs_bcast);
 	
