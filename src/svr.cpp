@@ -99,9 +99,12 @@ void fs_bcast()
 
 	while(1)
 	{
-		std::cout << "Now Broadcasting ..." << std::endl;
+		
+		std::cout << "....................................." << std::endl;
+		std::cout << "... Now Broadcasting Node Content ..." << std::endl;
+		std::cout << "....................................." << std::endl;
 		/* Broadcast Every 10 Seconds (Configurable) */
-		std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+		std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 		
 		/* Get files in Directory and create a FS Packet*/
 		DIR *dir;
@@ -109,7 +112,7 @@ void fs_bcast()
 		char fs_data[MAX_SIZE];
 		memset(fs_data, 0, MAX_SIZE);
 		strcpy(fs_data, CLI_ID);
-		if ((dir = opendir ("./")) != NULL) 
+		if ((dir = opendir ("../files")) != NULL) 
 		{
   			while((ent = readdir (dir)) != NULL)
  			{
@@ -124,7 +127,7 @@ void fs_bcast()
 		}
   		closedir (dir);
 
-		std::cout << fs_data << std::endl;		
+		std::cout << "--> "<< fs_data << std::endl;		
 
 		//Need to implment for loop over all Socket fd to send file info
 		sendto(bcast_sockfd, fs_data, strlen(fs_data), 0, (struct sockaddr *)&new_addr, sizeof(struct sockaddr_in)); 
