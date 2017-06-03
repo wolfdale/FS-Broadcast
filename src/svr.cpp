@@ -30,13 +30,18 @@
 #define BCAST_PORT 54545
 #define LISTENER_PORT 6000
 
-char Client_id[15]={0};
-char b_cast_time[10]={0};
+struct node_config_object{
+	char *node_id;
+	char *node_ip;
+	char *node_port;
+	int buffer;
+	int timer;
+};
 
-std::unordered_map<std::string,std::string> network_fs_info;
 
-void config_parser()
+void nodeBootSequence(struct node_config_object *nodeID)
 {
+	
 	FILE *config_file;
 	char line[255];
 	config_file = fopen("../config/config","r");
@@ -46,7 +51,7 @@ void config_parser()
 			continue;	
 		else
 		{
-			
+			std::cout<<line<<std::endl;
 
 
 		}
@@ -173,7 +178,9 @@ void bcast_listener()
 int main(int argc, char **argv)
 {
 	/* Configuration Parsing */
-	//config_parser();	
+	struct node_config_object *nodeID;
+	nodeID = (struct node_config_object*)malloc(sizeof(node_config_object));
+	nodeBootSequence(nodeID);	
 	
 	/* Start Broadcaseting Thread */
 	std::thread broadcaster(fs_bcast);
