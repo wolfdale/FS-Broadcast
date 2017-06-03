@@ -18,6 +18,10 @@
 #include<unordered_map>
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <iterator>
 
 #define SUCCESS 0
 #define FAILURE 1
@@ -38,26 +42,64 @@ struct node_config_object{
 	int timer;
 };
 
+template<typename Out>
+void split(const std::string &s, char delim, Out result) {
+    std::stringstream ss;
+    ss.str(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        *(result++) = item;
+    }
+}
+
+std::vector<std::string> split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    split(s, delim, std::back_inserter(elems));
+    return elems;
+}
 
 void nodeBootSequence(struct node_config_object *nodeID)
 {
 	
+	std::ifstream ConfigFile;
+	ConfigFile.open("../config/config");
+	std::string data;
+	while(getline(ConfigFile, data))
+	{
+		if(data == "") 
+		{
+			continue;
+		}
+		else
+		{
+			std::cout<<data<<std::endl;
+			std::vector<std::string> x = split(data, '=');
+			for (auto i: x)
+  			{	
+				std::cout << i << std::endl;
+			}	
+		}
+	}
+
+
+}
+/*
+
 	FILE *config_file;
 	char line[255];
+	string TempBuffer;
 	config_file = fopen("../config/config","r");
 	while(fgets(line,sizeof(line),config_file))
 	{
-		if(line[0]=='\n')
+		if(line[0]=='#'|| (!(strcmp(line,""))) )
 			continue;	
 		else
 		{
 			std::cout<<line<<std::endl;
-
-
 		}
 
 	}
-
+*/
 	//std::fstream config_file;
 	//char line[255];
 	//config_file.open("../config/config",std::ios::in|std::ios::out);
@@ -84,7 +126,7 @@ void nodeBootSequence(struct node_config_object *nodeID)
 
 */
 
-}
+
 
 
 
