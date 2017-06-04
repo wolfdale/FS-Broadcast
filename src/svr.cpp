@@ -111,7 +111,7 @@ void nodeBootSequence(struct node_config_object *nodeObj)
 	}
 }
 
-void fs_bcast()
+void fs_bcast(struct node_config_object *nodeObj)
 {
 	//Current Client Socket
 	int bcast_sockfd;
@@ -131,7 +131,7 @@ void fs_bcast()
 		std::cout << "... Now Broadcasting Node Content ..." << std::endl;
 		std::cout << "....................................." << std::endl;
 		/* Broadcast Every 10 Seconds (Configurable) */
-		std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+		std::this_thread::sleep_for(std::chrono::milliseconds((nodeObj->timer));
 		
 		/* Get files in Directory and create a FS Packet*/
 		DIR *dir;
@@ -206,7 +206,7 @@ int main(int argc, char **argv)
 	std::cout << "========================="<<nodeObj->timer;	
 	std::cout << "========================="<<nodeObj->listener_port;	
 	/* Start Broadcaseting Thread */
-	std::thread broadcaster(fs_bcast);
+	std::thread broadcaster(fs_bcast, nodeObj);
 	
 	/* Start BroadCast Listener */
 	std::thread listener(bcast_listener);
