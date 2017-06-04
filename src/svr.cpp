@@ -1,29 +1,11 @@
-#include<iostream>
-#include<vector>
-#include<cstdio>
-#include<string>
-#include<thread>
-#include<dirent.h>
-#include<chrono>
-#include<sys/socket.h>
-#include<netinet/in.h>
-#include<sys/types.h>
-#include<arpa/inet.h>
-#include<fcntl.h>
-#include<unistd.h>
-#include<cstdlib>
-#include<sys/wait.h>
-#include<string.h>
-#include<mutex>
-#include<unordered_map>
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <iterator>
+/************************************************
+*
+*	FS BROADCAST
+*
+************************************************/
 
-//#include "fs_header.h"
+#include "fs_header.h"
+
 #define SUCCESS 0
 #define FAILURE 1
 #define MAX_SIZE 1024
@@ -131,7 +113,7 @@ void fs_bcast(struct node_config_object *nodeObj)
 		std::cout << "... Now Broadcasting Node Content ..." << std::endl;
 		std::cout << "....................................." << std::endl;
 		/* Broadcast Every 10 Seconds (Configurable) */
-		std::this_thread::sleep_for(std::chrono::milliseconds((nodeObj->timer));
+		std::this_thread::sleep_for(std::chrono::milliseconds(atoi(nodeObj->timer)));
 		
 		/* Get files in Directory and create a FS Packet*/
 		DIR *dir;
