@@ -19,5 +19,12 @@
 #include<sys/wait.h>
 #include<string.h>
 #include<mutex>
+#include<unordered_map>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <iterator>
 
 #endif
