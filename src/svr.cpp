@@ -8,13 +8,12 @@
 
 #define SUCCESS 0
 #define FAILURE 1
-#define MAX_SIZE 1024
-#define CLI_ID "101"
 #define TOKEN "#"
-//#define BCAST_PORT 6000
-//#define LISTENER_PORT 54545
 
-#define BCAST_PORT 54545
+//#define MAX_SIZE 1024
+//#define CLI_ID "101"
+
+//#define BCAST_PORT 54545
 #define LISTENER_PORT 6000
 
 struct node_config_object{
@@ -26,21 +25,6 @@ struct node_config_object{
 	char *listener_port;
 };
 
-template<typename Out>
-void split(const std::string &s, char delim, Out result) {
-    std::stringstream ss;
-    ss.str(s);
-    std::string item;
-    while (std::getline(ss, item, delim)) {
-        *(result++) = item;
-    }
-}
-
-std::vector<std::string> split(const std::string &s, char delim) {
-    std::vector<std::string> elems;
-    split(s, delim, std::back_inserter(elems));
-    return elems;
-}
 
 void nodeBootSequence(struct node_config_object *nodeObj)
 {
@@ -58,11 +42,9 @@ void nodeBootSequence(struct node_config_object *nodeObj)
 		}
                 else
                 {
-                        std::cout<<line<<std::endl;
 			char *temp1 = NULL;
 			char *temp2 = NULL;
 			temp1 = strtok(line,"=");
-                        std::cout<<temp1<<std::endl;
 			if(strcmp(temp1,"NODE_ID") == 0){
 				temp2 = strtok(NULL,"=");
 				nodeObj->node_id = strdup(temp2);
@@ -103,8 +85,8 @@ void fs_bcast(struct node_config_object *nodeObj)
 	struct sockaddr_in new_addr;
 	memset(&new_addr, 0, sizeof(new_addr));
 	new_addr.sin_family = AF_INET;
-	new_addr.sin_port = BCAST_PORT;
-	new_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	new_addr.sin_port = atoi(nodeObj->node_port);
+	new_addr.sin_addr.s_addr = inet_addr(nodeObj->node_ip);
 
 	while(1)
 	{
@@ -118,9 +100,9 @@ void fs_bcast(struct node_config_object *nodeObj)
 		/* Get files in Directory and create a FS Packet*/
 		DIR *dir;
 		struct dirent *ent;
-		char fs_data[MAX_SIZE];
-		memset(fs_data, 0, MAX_SIZE);
-		strcpy(fs_data, CLI_ID);
+		char fs_data[atoi(nodeObj->buffer)];
+		memset(fs_data, 0, atoi(nodeObj->buffer));
+		strcpy(fs_data, nodeObj->node_id);
 		if ((dir = opendir ("../files")) != NULL) 
 		{
   			while((ent = readdir (dir)) != NULL)
@@ -136,7 +118,7 @@ void fs_bcast(struct node_config_object *nodeObj)
 		}
   		closedir (dir);
 
-		std::cout << "--> "<< fs_data << std::endl;		
+		std::cout << "--> NODE ID : "<< fs_data << std::endl;		
 
 		//Need to implment for loop over all Socket fd to send file info
 		sendto(bcast_sockfd, fs_data, strlen(fs_data), 0, (struct sockaddr *)&new_addr, sizeof(struct sockaddr_in)); 
@@ -163,7 +145,7 @@ void bcast_listener()
 	while(1)
 	{
 		std::cout << "Listening ..." << std::endl;
-		char bcast_buffer[MAX_SIZE];
+		char bcast_buffer[1055];
 		memset(bcast_buffer, 0, sizeof(bcast_buffer));
 		recvfrom(sockfd, bcast_buffer, sizeof(bcast_buffer)-1, 0, (sockaddr *)&recv_client_addr, &slen);
 		std::cout << "Listening.." <<std::endl;
@@ -181,12 +163,6 @@ int main(int argc, char **argv)
 	struct node_config_object *nodeObj;
 	nodeObj = (struct node_config_object*)malloc(sizeof(node_config_object));
 	nodeBootSequence(nodeObj);	
-	std::cout << "========================="<<nodeObj->node_id;	
-	std::cout << "========================="<<nodeObj->node_ip;	
-	std::cout << "========================="<<nodeObj->node_port;	
-	std::cout << "========================="<<nodeObj->buffer;	
-	std::cout << "========================="<<nodeObj->timer;	
-	std::cout << "========================="<<nodeObj->listener_port;	
 	/* Start Broadcaseting Thread */
 	std::thread broadcaster(fs_bcast, nodeObj);
 	
