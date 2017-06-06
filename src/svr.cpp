@@ -10,11 +10,9 @@
 #define FAILURE 1
 #define TOKEN "#"
 
-//#define MAX_SIZE 1024
-//#define CLI_ID "101"
-
-//#define BCAST_PORT 54545
 #define LISTENER_PORT 6000
+
+std::mutex mtx;
 
 struct node_config_object{
 	char *node_id;
@@ -138,7 +136,7 @@ void bcast_listener()
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	memset(&listener_addr, 0, sizeof(listener_addr));
 	listener_addr.sin_family = AF_INET;
-	listener_addr.sin_port = LISTENER_PORT;
+	listener_addr.sin_port = 54545;
 	listener_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	int bind_status = bind(sockfd, (struct sockaddr*)&listener_addr, sizeof(listener_addr));
 
@@ -147,7 +145,10 @@ void bcast_listener()
 		std::cout << "Listening ..." << std::endl;
 		char bcast_buffer[1055];
 		memset(bcast_buffer, 0, sizeof(bcast_buffer));
+		mtx.lock();
+		std::this_thread::sleep_for(std::chrono::milliseconds(10000));
 		recvfrom(sockfd, bcast_buffer, sizeof(bcast_buffer)-1, 0, (sockaddr *)&recv_client_addr, &slen);
+		mtx.unlock();
 		std::cout << "Listening.." <<std::endl;
 		std::cout << "GOT FS" << bcast_buffer << std::endl;
 
