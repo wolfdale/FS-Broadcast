@@ -45,7 +45,7 @@ void bcast_listener()
 	memset(&new_addr, 0, sizeof(new_addr));
 	new_addr.sin_family = AF_INET;
 	new_addr.sin_port = BCAST_PORT;
-	new_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	new_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 	int bind_status = bind(bcast_sockfd, (struct sockaddr*)&new_addr, sizeof(new_addr));
 
