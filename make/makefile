@@ -7,7 +7,7 @@ OBJ=../obj/
 HEADER=../include/
 INCLUDE=-I../include/
 FILE=../files/
-
+TEST=../bcast_listener
 
 $(BIN)fs_bcast:$(OBJ)svr.o
 	mkdir -p $(BIN)
